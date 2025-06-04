@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart'; // 🧱 Flutter para UI
 import 'package:firebase_core/firebase_core.dart'; // 🔥 Firebase Core
-import 'package:firebase_auth/firebase_auth.dart'; // 🔐 Firebase Auth
+// 🔐 Firebase Auth
 import 'firebase_options.dart'; // ⚙️ Configuración de Firebase
+import 'package:intl/date_symbol_data_local.dart';
+
 
 // 🖼️ Pantallas
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/check_auth_screen.dart'; // 🧪 Sigue disponible si la quieres usar más adelante
+import 'screens/check_auth_screen.dart'; // ✅ Nueva pantalla tipo splash/check
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ✅ Inicializa Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
 
-  // 🚪 Cierra sesión cada vez que se inicia la app (ideal para pruebas)
-  await FirebaseAuth.instance.signOut();
+  // 📅 Inicializar soporte para fechas en español (Chile) 
+  await initializeDateFormatting('es_CL', null); // 📅 Esto es clave 
+
+  // 🧪 Puedes comentar esto si no quieres cerrar sesión automáticamente al iniciar
+  // await FirebaseAuth.instance.signOut();
 
   // 🚀 Inicia la app
   runApp(const MyApp());
@@ -32,14 +39,13 @@ class MyApp extends StatelessWidget {
       title: 'App Comunitaria',
       debugShowCheckedModeBanner: false,
 
-      // 🧭 Pantalla inicial → Login (siempre, porque cerramos sesión antes)
-      home: const LoginScreen(),
+      // 🧭 Pantalla inicial → CheckAuthScreen (muestra splash y decide a dónde ir)
+      home: const CheckAuthScreen(),
 
       // 🛣️ Rutas nombradas para navegación
       routes: {
         '/login': (context) => const LoginScreen(),
-        '/home': (context) => const HomeScreen(),
-        // '/check': (context) => const CheckAuthScreen(), // 💡 Si decides usarla después
+        '/home': (context) => const HomeScreen(),        
       },
     );
   }

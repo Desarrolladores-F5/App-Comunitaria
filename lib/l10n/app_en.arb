@@ -1,0 +1,6 @@
+{
+  "@@locale": "en",
+  "tituloApp": "Community App",
+  "bienvenida": "Hello, {nombre} 👋",
+  "direccion": "Address: {direccion}"
+}

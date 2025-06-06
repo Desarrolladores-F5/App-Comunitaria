@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app_comunitaria/l10n/app_localizations.dart'; // 🌐 Traducciones
 import 'crearpublicacion_screen.dart';
-import 'menu_ajustes_screen.dart'; // 📂 Ajustes desde el menú
+import 'menu_ajustes_screen.dart';
 import 'menu_idioma_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String? direccion;
   bool cargandoUsuario = true;
 
-  // 🔄 Cargar datos del usuario desde Firestore
   Future<void> cargarDatosUsuario() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         }
       } catch (e) {
-        print('❌ Error al cargar datos del usuario: \$e');
+        print('❌ Error al cargar datos del usuario: $e');
         setState(() {
           cargandoUsuario = false;
         });
@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     cargarDatosUsuario();
   }
 
-  // 🧱 Widget para mostrar una tarjeta de publicación
   Widget tarjetaPublicacion(String autor, String fecha, String contenido, String? urlImagen) {
     return Card(
       elevation: 3,
@@ -73,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 📋 Drawer lateral con menú de navegación
   Drawer construirDrawer() {
     return Drawer(
       shape: const RoundedRectangleBorder(
@@ -100,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          ListTile(                             // 📋 aca está la parte para cambiar idioma
+          ListTile(
             leading: const Icon(Icons.language),
             title: const Text('Idioma'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -158,10 +156,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
-        title: const Text('Bienvenido'),
+        title: Text(tr.tituloApp),
         backgroundColor: Colors.blue,
       ),
       drawer: construirDrawer(),
@@ -172,9 +172,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Hola, \$nombre 👋', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  Text(tr.bienvenida(nombre ?? ''), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
-                  Text('Dirección: \$direccion', style: const TextStyle(fontSize: 16)),
+                  Text(tr.direccion(direccion ?? ''), style: const TextStyle(fontSize: 16)),
                   const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () => Navigator.push(

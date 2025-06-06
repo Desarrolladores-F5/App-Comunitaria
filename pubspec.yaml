@@ -31,6 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_localizations:
+    sdk: flutter  # ✅ ¡ESTO es lo que te faltaba!
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -41,7 +44,7 @@ dependencies:
   animated_text_kit: ^4.2.2
   image_picker: ^1.0.4 # 👈 Usa esta o la última versión estable
   firebase_storage: ^12.4.6
-  intl: ^0.18.1 # ✅ Compatible con Firebase y Dart actuales
+  intl: ^0.20.2 # ✅ Compatible con Firebase y Dart actuales y flutter_localizations
 
 dev_dependencies:
   flutter_test:
@@ -59,11 +62,17 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  generate: true  # ✅ Habilita generación automática de archivos
+  
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+# 👇 Esto asegura que use la carpeta l10n para traducciones
+localizations:
+  arb-dir: lib/l10n       # ✅ Ruta correcta de los archivos .arb
+  template-arb-file: app_en.arb             # ✅ Archivo base en inglés
+  output-localization-file: app_localizations.dart             # ✅ Nombre de salida
 
   # To add assets to your application, add an assets section, like this:
   # assets:

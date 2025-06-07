@@ -6,6 +6,8 @@ import 'package:app_comunitaria/l10n/app_localizations.dart'; // 🌐 Traduccion
 import 'crearpublicacion_screen.dart';
 import 'menu_ajustes_screen.dart';
 import 'menu_idioma_screen.dart';
+import 'menu_acercade_screen.dart'; // 🆕 Importación del nuevo módulo
+import 'menu_sugerencias_screen.dart'; // 🆕 Sugerencias o Feedback
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -111,14 +113,26 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.info),
+            leading: const Icon(Icons.info_outline),
             title: const Text('Acerca de la App'),
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MenuAcercaDeScreen()),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.feedback),
             title: const Text('Sugerencias o Feedback'),
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MenuSugerenciasScreen()),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.bug_report),

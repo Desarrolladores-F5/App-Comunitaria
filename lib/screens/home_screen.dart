@@ -2,12 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart'; // 📶 Para el estado de la conexión
 import 'package:app_comunitaria/l10n/app_localizations.dart'; // 🌐 Traducciones
 import 'crearpublicacion_screen.dart';
 import 'menu_ajustes_screen.dart';
 import 'menu_idioma_screen.dart';
-import 'menu_acercade_screen.dart'; // 🆕 Importación del nuevo módulo
-import 'menu_sugerencias_screen.dart'; // 🆕 Sugerencias o Feedback
+import 'menu_acercade_screen.dart'; // 🆕 Acerca de la App
+import 'menu_sugerencias_screen.dart'; // 🔹 Sugerencias o Feedback
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,7 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String? nombre;
   String? direccion;
   bool cargandoUsuario = true;
+  String estadoConexion = 'Verificando...';
 
+  // ✨ Carga los datos del usuario desde Firestore
   Future<void> cargarDatosUsuario() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
@@ -42,10 +45,31 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // 📂 Verifica el estado de la conexión a internet
+  Future<void> verificarConexion() async {
+    final result = await Connectivity().checkConnectivity();
+    setState(() {
+      switch (result) {
+        case ConnectivityResult.mobile:
+          estadoConexion = 'Conectado (Datos móviles)';
+          break;
+        case ConnectivityResult.wifi:
+          estadoConexion = 'Conectado (Wi-Fi)';
+          break;
+        case ConnectivityResult.none:
+          estadoConexion = 'Sin conexión';
+          break;
+        default:
+          estadoConexion = 'Desconocido';
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     cargarDatosUsuario();
+    verificarConexion();
   }
 
   Widget tarjetaPublicacion(String autor, String fecha, String contenido, String? urlImagen) {
@@ -94,10 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MenuAjustesScreen()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MenuAjustesScreen()));
             },
           ),
           ListTile(
@@ -106,10 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MenuIdiomaScreen()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MenuIdiomaScreen()));
             },
           ),
           ListTile(
@@ -117,10 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('Acerca de la App'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MenuAcercaDeScreen()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MenuAcercaDeScreen()));
             },
           ),
           ListTile(
@@ -128,16 +143,14 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('Sugerencias o Feedback'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MenuSugerenciasScreen()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MenuSugerenciasScreen()));
             },
           ),
           ListTile(
             leading: const Icon(Icons.bug_report),
             title: const Text('Estado de la App'),
-            onTap: () {},
+            subtitle: Text(estadoConexion), // 🚫 Mostrar estado de conexión
+            onTap: verificarConexion,
           ),
           const Divider(),
           ListTile(
@@ -186,7 +199,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(tr.bienvenida(nombre ?? ''), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  Text(tr.bienvenida(nombre ?? ''),
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Text(tr.direccion(direccion ?? ''), style: const TextStyle(fontSize: 16)),
                   const SizedBox(height: 20),
